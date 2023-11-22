@@ -1,0 +1,22 @@
+verbose = \n  \e[4m%f:%l\e[24m  \e[3m%p\e[23m  (Severity: %s)\n\n        \e[2m@%l:%c\e[22m  \e[1m%r\e[22m\n\n    > \e[1m%m\e[22m\n\n%d\n\n———————————————————————————————————————————————————————————————————————————————\n
+
+[-CodeLayout::RequireTidyCode]
+[-ControlStructures::ProhibitPostfixControls]
+[-ControlStructures::ProhibitUnlessBlocks]
+[-ControlStructures::ProhibitYadaOperator]
+[-ErrorHandling::RequireCarping]
+[-Modules::ProhibitAutomaticExportation]
+[-Modules::ProhibitMultiplePackages]
+[-Modules::RequireVersionVar]
+[-RegularExpressions::ProhibitComplexRegexes]
+[-RegularExpressions::ProhibitEscapedMetacharacters]
+[-RegularExpressions::ProhibitFixedStringMatches]
+[-RegularExpressions::RequireExtendedFormatting]
+[-ValuesAndExpressions::ProhibitEscapedCharacters]
+
+[InputOutput::RequireCheckedSyscalls]
+functions = :builtins
+exclude_functions = print close
+
+[ValuesAndExpressions::ProhibitMagicNumbers]
+allowed_values = -1 0 1 2 3 4 8 16 127 128 255 256 400

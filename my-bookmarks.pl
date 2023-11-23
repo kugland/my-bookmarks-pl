@@ -14,30 +14,12 @@ use List::Util qw{ pairmap };
 use Env qw{ HOME };
 use Getopt::Long qw{ :config gnu_getopt no_auto_abbrev no_ignore_case };
 
+my $ROFI_THEME = undef;
+
 my $bookmarks   = "$HOME/.my-bookmarks.txt";
 my $rofi        = 'rofi';
 my $browser     = 'xdg-open';
 my $tor_browser = undef;
-
-Getopt::Long::GetOptions(
-  'bookmarks=s'   => \$bookmarks,
-  'rofi=s'        => \$rofi,
-  'browser=s'     => \$browser,
-  'tor-browser=s' => \$tor_browser,
-  'help'          => sub {
-    print <<~"HELP";
-            Usage: $PROGRAM_NAME [options]
-
-            Options:
-                --bookmarks <file>    Path to bookmarks file
-                --rofi <path>         Path to rofi executable
-                --browser <path>      Path to browser executable
-                --tor-browser <path>  Path to Tor Browser executable
-                --help                Show this help message
-        HELP
-    exit 0;
-  },
-) or die "Try '$PROGRAM_NAME --help' for more information.\n";
 
 
 sub load_bookmarks {
@@ -60,10 +42,7 @@ sub load_bookmarks {
 
 sub pipe_to_rofi {
   my ($content) = @_;
-  my @rofi = (
-    qw{ rofi -dmenu -i -sep \x00 -no-custom -p bookmarks -theme-str },
-    q{ listview { spacing: 25; } element-text { markup: true; } },
-  );
+  my @rofi = ( $rofi, qw{ -dmenu -i -sep \x00 -no-custom -p bookmarks -theme-str }, $ROFI_THEME );
   my $pid = open2( my $rx, my $tx, @rofi ) or do die "Can’t open rofi: $ERRNO\n";
   binmode $rx, ':raw:encoding(UTF-8)';
   binmode $tx, ':raw:encoding(UTF-8)';
@@ -100,9 +79,52 @@ sub handle_response {
 
 
 sub main {
+  Getopt::Long::GetOptions(
+    'bookmarks=s'   => \$bookmarks,
+    'rofi=s'        => \$rofi,
+    'browser=s'     => \$browser,
+    'tor-browser=s' => \$tor_browser,
+    'help'          => sub {
+      print <<~";;";
+        Usage: $PROGRAM_NAME [options]
+
+        Options:
+            --bookmarks <file>    Path to bookmarks file
+            --rofi <path>         Path to rofi executable
+            --browser <path>      Path to browser executable
+            --tor-browser <path>  Path to Tor Browser executable
+            --help                Show this help message
+        ;;
+      exit 0;
+    },
+  ) or die "Try '$PROGRAM_NAME --help' for more information.\n";
+
   my $response = pipe_to_rofi( load_bookmarks() );
   handle_response($response) if defined $response;
   return 0;
 }
+
+
+$ROFI_THEME = <<';;';
+  * { foreground: White; }
+  window {
+    background-color: rgba (50, 50, 50, 95%);
+    width: 900;
+    height: 600;
+    border: 1;
+    border-color: Black/50%;
+    border-radius: 10;
+  }
+  listview { border: 0; spacing: 25; }
+  element { border: 0; }
+  element normal.normal { background-color: transparent; }
+  element selected.normal { background-color: White/6%; text-color: var(normal-foreground); }
+  element alternate.normal { background-color: transparent; }
+  element-text { padding: 0px 8px; background-color: inherit; text-color: inherit; markup: true; }
+  scrollbar { handle-color: White/30%; }
+  inputbar { padding: 8; children: [ "prompt","textbox-prompt-colon","entry","case-indicator" ]; }
+  textbox-prompt-colon { str: " ⟩ "; }
+;;
+
 
 exit main();

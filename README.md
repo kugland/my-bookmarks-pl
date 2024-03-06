@@ -31,6 +31,8 @@ Also    we   don't really care  about
 - Perl, naturally.
 - [`rofi`](https://github.com/davatorium/rofi)
 - [`notify-send`](https://man.archlinux.org/man/notify-send.1.en)
+- [`Getopt::Long`](https://metacpan.org/pod/Getopt::Long)
+- [`URI`](https://metacpan.org/pod/URI)
 
 ## License
 

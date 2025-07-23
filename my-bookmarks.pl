@@ -42,7 +42,7 @@ sub load_bookmarks {
 
 sub pipe_to_rofi {
   my ($content) = @_;
-  my @rofi = ( $rofi, qw{ -dmenu -i -sep \x00 -no-custom -p bookmarks -theme-str }, $ROFI_THEME );
+  my @rofi = ( $rofi, qw{ -dmenu -i -sep \x00 -no-custom -eh 2 -p bookmarks -theme-str }, $ROFI_THEME );
   my $pid = open2( my $rx, my $tx, @rofi ) or do die "Can’t open rofi: $ERRNO\n";
   binmode $rx, ':raw:encoding(UTF-8)';
   binmode $tx, ':raw:encoding(UTF-8)';
@@ -115,7 +115,7 @@ $ROFI_THEME = <<';;';
     border-color: Black/50%;
     border-radius: 10;
   }
-  listview { border: 0; spacing: 25; }
+  listview { border: 0; spacing: 4; }
   element { border: 0; }
   element normal.normal { background-color: transparent; }
   element selected.normal { background-color: White/6%; text-color: var(normal-foreground); }
